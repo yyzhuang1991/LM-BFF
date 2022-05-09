@@ -493,7 +493,6 @@ def main():
 
     # Build metric
     def build_compute_metrics_fn(task_name: str) -> Callable[[EvalPrediction], Dict]:
-        print(f"------------- {task_name}")
         def compute_metrics_fn(p: EvalPrediction):
             # Note: the eval dataloader is sequential, so the examples are in order.
             # We average the logits over each sample for using demonstrations.
@@ -519,13 +518,12 @@ def main():
         return compute_metrics_fn
     
     # Initialize our Trainer
-    temp_task_name = 'sst-2' if data_args.task_name == 'sst-3' else data_args.task_name
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        compute_metrics=build_compute_metrics_fn(temp_task_name)
+        compute_metrics=build_compute_metrics_fn(data_args.task_name)
     )
 
     # Training
@@ -565,8 +563,7 @@ def main():
         eval_datasets = [eval_dataset]
 
         for eval_dataset in eval_datasets:
-            temp_task_name = 'sst-2' if eval_dataset.args.task_name == 'sst-3' else eval_dataset.args.task_name
-            trainer.compute_metrics = build_compute_metrics_fn(temp_task_name)
+            trainer.compute_metrics = build_compute_metrics_fn(eval_dataset.args.task_name)
             output = trainer.evaluate(eval_dataset=eval_dataset)
             eval_result = output.metrics 
 
@@ -593,8 +590,7 @@ def main():
             )
 
         for test_dataset in test_datasets:
-            temp_task_name = 'sst-2' if test_dataset.args.task_name == 'sst-3' else test_dataset.args.task_name
-            trainer.compute_metrics = build_compute_metrics_fn(temp_task_name)
+            trainer.compute_metrics = build_compute_metrics_fn(test_dataset.args.task_name)
             output = trainer.evaluate(eval_dataset=test_dataset)
             test_result = output.metrics
 
