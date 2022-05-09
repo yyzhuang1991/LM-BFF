@@ -519,12 +519,13 @@ def main():
         return compute_metrics_fn
     
     # Initialize our Trainer
+    temp_task_name = 'sst-2' if data_args.task_name == 'sst-3' else data_args.task_name
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        compute_metrics=build_compute_metrics_fn(data_args.task_name)
+        compute_metrics=build_compute_metrics_fn(temp_task_name)
     )
 
     # Training
