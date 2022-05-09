@@ -464,7 +464,7 @@ class Trainer(transformers.Trainer):
 
         output = self.prediction_loop(eval_dataloader, description="Evaluation")
 
-        print("-----------------")
+        print("----------------- metric",output.metrics )
         self.log(output.metrics)
 
         if self.args.tpu_metrics_debug or self.args.debug:
