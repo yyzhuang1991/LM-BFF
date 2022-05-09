@@ -565,7 +565,8 @@ def main():
         eval_datasets = [eval_dataset]
 
         for eval_dataset in eval_datasets:
-            trainer.compute_metrics = build_compute_metrics_fn(eval_dataset.args.task_name)
+            temp_task_name = 'sst-2' if eval_dataset.args.task_name == 'sst-3' else eval_dataset.args.task_name
+            trainer.compute_metrics = build_compute_metrics_fn(temp_task_name)
             output = trainer.evaluate(eval_dataset=eval_dataset)
             eval_result = output.metrics 
 
@@ -592,7 +593,8 @@ def main():
             )
 
         for test_dataset in test_datasets:
-            trainer.compute_metrics = build_compute_metrics_fn(test_dataset.args.task_name)
+            temp_task_name = 'sst-2' if test_dataset.args.task_name == 'sst-3' else test_dataset.args.task_name
+            trainer.compute_metrics = build_compute_metrics_fn(temp_task_name)
             output = trainer.evaluate(eval_dataset=test_dataset)
             test_result = output.metrics
 
