@@ -11,7 +11,7 @@ from transformers.data.metrics import simple_accuracy
 from transformers.data.processors.glue import glue_processors
 
 def get_glue_label(task, line):
-    if task in ["MNLI", "MRPC", "QNLI", "QQP", "RTE", "SNLI", "SST-2", "STS-B", "WNLI", "CoLA"]:
+    if task in ["MNLI", "MRPC", "QNLI", "QQP", "RTE", "SNLI", "SST-2","SST-3", "STS-B", "WNLI", "CoLA"]:
         line = line.strip().split('\t')
         if task == 'CoLA':
             return line[1]
@@ -29,6 +29,8 @@ def get_glue_label(task, line):
             return line[-1]
         elif task == 'SST-2':
             return line[-1]
+        elif task == 'SST-3':
+            return line[-1]
         elif task == 'STS-B':
             return 0 if float(line[-1]) < 2.5 else 1
         elif task == 'WNLI':
@@ -44,7 +46,7 @@ def get_labels(data_dir, k, seed, task, print_name):
         labels = np.zeros((len(data)), dtype=np.uint8)
         for i, example in enumerate(data):
             labels[i] = example[0]
-    elif print_name in ["MNLI", "MRPC", "QNLI", "QQP", "RTE", "SNLI", "SST-2", "STS-B", "WNLI", "CoLA"]:
+    elif print_name in ["MNLI", "MRPC", "QNLI", "QQP", "RTE", "SNLI", "SST-2","SST-3", "STS-B", "WNLI", "CoLA"]:
         lines = []
         file_name = os.path.join(data_dir, print_name, '{}-{}'.format(k, seed), 'test.tsv')
         if task == 'mnli':
@@ -124,6 +126,9 @@ def main():
         elif condition['task_name'] == 'sst-2':
             args.key = 'sst-2_dev_eval_acc'
             args.test_key = 'sst-2_test_eval_acc'
+        elif condition['task_name'] == 'sst-3':
+            args.key = 'sst-3_dev_eval_acc'
+            args.test_key = 'sst-3_test_eval_acc'
         elif condition['task_name'] == 'snli':
             args.key = 'snli_dev_eval_acc'
             args.test_key = 'snli_test_eval_acc'
@@ -236,6 +241,7 @@ def main():
         'qqp': 'QQP',
         'sts-b': 'STS-B',
         'sst-2': 'SST-2',
+        'sst-3': 'SST-3',
         'snli': 'SNLI',
         'mnli': 'MNLI',
         'mnli-mm': 'MNLI',

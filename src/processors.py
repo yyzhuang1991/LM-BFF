@@ -246,6 +246,47 @@ class Sst2Processor(DataProcessor):
             examples.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
         return examples
 
+class Sst3Processor(DataProcessor):
+    """Processor for the SST-2 data set (GLUE version)."""
+
+    def get_example_from_tensor_dict(self, tensor_dict):
+        """See base class."""
+        return InputExample(
+            tensor_dict["idx"].numpy(),
+            tensor_dict["sentence"].numpy().decode("utf-8"),
+            None,
+            str(tensor_dict["label"].numpy()),
+        )
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
+
+    def get_labels(self):
+        """See base class."""
+        return ["0", "1", "2"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training, dev and test sets."""
+        examples = []
+        text_index = 0
+        for (i, line) in enumerate(lines):
+            if i == 0:
+                continue
+            guid = "%s-%s" % (set_type, i)
+            text_a = line[text_index]
+            label = line[1]
+            examples.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
+
 
 class StsbProcessor(DataProcessor):
     """Processor for the STS-B data set (GLUE version)."""
@@ -542,6 +583,8 @@ processors_mapping = {
     "mnli-mm": MnliMismatchedProcessor(),
     "mrpc": MrpcProcessor(),
     "sst-2": Sst2Processor(),
+    "sst-3": Sst3Processor(),
+
     "sts-b": StsbProcessor(),
     "qqp": QqpProcessor(),
     "qnli": QnliProcessor(),
@@ -561,6 +604,8 @@ num_labels_mapping = {
     "mnli": 3,
     "mrpc": 2,
     "sst-2": 2,
+    "sst-3": 3,
+
     "sts-b": 1,
     "qqp": 2,
     "qnli": 2,
@@ -581,6 +626,8 @@ output_modes_mapping = {
     "mnli-mm": "classification",
     "mrpc": "classification",
     "sst-2": "classification",
+    "sst-3": "classification",
+
     "sts-b": "regression",
     "qqp": "classification",
     "qnli": "classification",
@@ -602,6 +649,8 @@ compute_metrics_mapping = {
     "mnli-mm": glue_compute_metrics,
     "mrpc": glue_compute_metrics,
     "sst-2": glue_compute_metrics,
+    "sst-3": glue_compute_metrics,
+
     "sts-b": glue_compute_metrics,
     "qqp": glue_compute_metrics,
     "qnli": glue_compute_metrics,

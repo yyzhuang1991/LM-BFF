@@ -220,7 +220,7 @@ def generate(dataset, template, model, tokenizer, target_number, mapping, beam, 
     return result
 
 def load_dataset(task, data_dir):
-    if task in ["MNLI", "MRPC", "QNLI", "QQP", "RTE", "SNLI", "SST-2", "STS-B", "WNLI", "CoLA"]:
+    if task in ["MNLI", "MRPC", "QNLI", "QQP", "RTE", "SNLI", "SST-2", "SST-3","STS-B", "WNLI", "CoLA"]:
         lines = open(os.path.join(data_dir, 'train.tsv')).readlines()
         if task != 'CoLA':
             lines = lines[1:]
@@ -242,7 +242,7 @@ def load_dataset(task, data_dir):
                 dataset.append({'label': line[-1], 'text': [line[1], line[2]]})
             elif task == 'SNLI':
                 dataset.append({'label': line[-1], 'text': [line[7], line[8]]})
-            elif task == 'SST-2':
+            elif task == 'SST-2' or task == "SST-3":
                 dataset.append({'label': line[-1], 'text': [line[0]]})
             elif task == 'STS-B':
                 dataset.append({'label': '0' if float(line[-1]) < 2.5 else '1', 'text': [line[-3], line[-2]]})
@@ -270,6 +270,7 @@ def search_template(model, tokenizer, task_name, k, seed, beam, output_dir, data
     # Manual label word mappings
     map_of_mapping = {
         'SST-2': {'0':'terrible','1':'great'},
+        "SST-3": {'0': "great",'1':'terrible','2':'okay'}
         'sst-5': {0:'terrible',1:'bad',2:'okay',3:'good',4:'great'},
         'mr': {0:'terrible',1:'great'},
         'cr': {0:'terrible',1:'great'},
@@ -294,7 +295,7 @@ def search_template(model, tokenizer, task_name, k, seed, beam, output_dir, data
     os.makedirs(os.path.join(output_dir, task_name), exist_ok=True)
     f = open(os.path.join(output_dir, task_name, "{}-{}.txt".format(k, seed)), 'w')
 
-    if task_name in ['SST-2', 'sst-5', 'mr', 'cr', 'subj', 'trec', 'CoLA', 'mpqa']:
+    if task_name in ['SST-2', "SST-3",'sst-5', 'mr', 'cr', 'subj', 'trec', 'CoLA', 'mpqa']:
         # Single sentence tasks
         # We take two kinds of templates: put [MASK] at the beginning or the end
         template = "*cls**sentu_0**<extra_id_0>**label**<extra_id_1>**sep+*"
@@ -350,7 +351,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--t5_model', type=str, default='t5-3b', help='T5 pre-trained model')
     parser.add_argument('--seed', type=int, nargs='+', default=[42, 13, 21, 100, 87], help="Data split seeds")
-    parser.add_argument('--task_name', type=str, nargs='+', default=['SST-2', 'sst-5', 'mr', 'cr', 'subj', 'trec', 'CoLA', 'MRPC', 'QQP', 'STS-B', 'MNLI', 'SNLI', 'QNLI', 'RTE'], help="Task names")
+    parser.add_argument('--task_name', type=str, nargs='+', default=['SST-2', "SST-3",'sst-5', 'mr', 'cr', 'subj', 'trec', 'CoLA', 'MRPC', 'QQP', 'STS-B', 'MNLI', 'SNLI', 'QNLI', 'RTE'], help="Task names")
     parser.add_argument('--output_dir', type=str, default='Output directory')
 
     parser.add_argument('--data_dir', type=str, default="data/k-shot", help="Data directory")
