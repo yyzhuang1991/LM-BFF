@@ -168,7 +168,7 @@ def default_dev_objective(metrics):
     #     return metrics["eval_pearson"]
     # elif "eval_acc" in metrics:
     #     return metrics["eval_acc"]
-    return return metrics["eval_f1"]
+    return metrics["eval_f1"]
     raise Exception("No metric founded for {}".format(metrics))
 
 class Trainer(transformers.Trainer):
