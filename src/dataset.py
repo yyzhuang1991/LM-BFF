@@ -130,7 +130,6 @@ def tokenize_multipart_input(
                 new_tokens.append(label_word)
             elif part[:5] == 'sent_':
                 sent_id = int(part.split('_')[1])
-                print(sent_id, input_text_list)
                 new_tokens += enc(input_text_list[sent_id]) 
             elif part[:6] == '+sent_':
                 # Add space
