@@ -156,19 +156,19 @@ def default_dev_objective(metrics):
     """
     Objective used for picking the best model on development sets
     """
-    # if "eval_mnli/acc" in metrics:
-    #     return metrics["eval_mnli/acc"]
-    # elif "eval_mnli-mm/acc" in metrics:
-    #     return metrics["eval_mnli-mm/acc"]
-    # elif "eval_f1" in metrics:
-    #     return metrics["eval_f1"]
-    # elif "eval_mcc" in metrics:
-    #     return metrics["eval_mcc"]
-    # elif "eval_pearson" in metrics:
-    #     return metrics["eval_pearson"]
-    # elif "eval_acc" in metrics:
-    #     return metrics["eval_acc"]
-    return metrics["eval_acc"]
+    if "eval_mnli/acc" in metrics:
+        return metrics["eval_mnli/acc"]
+    elif "eval_mnli-mm/acc" in metrics:
+        return metrics["eval_mnli-mm/acc"]
+    elif "eval_f1" in metrics:
+        return metrics["eval_f1"]
+    elif "eval_mcc" in metrics:
+        return metrics["eval_mcc"]
+    elif "eval_pearson" in metrics:
+        return metrics["eval_pearson"]
+    elif "eval_acc" in metrics:
+        return metrics["eval_acc"]
+ 
     raise Exception("No metric founded for {}".format(metrics))
 
 class Trainer(transformers.Trainer):
@@ -464,7 +464,6 @@ class Trainer(transformers.Trainer):
 
         output = self.prediction_loop(eval_dataloader, description="Evaluation")
 
-        print("----------------- metric",output.metrics )
         self.log(output.metrics)
 
         if self.args.tpu_metrics_debug or self.args.debug:

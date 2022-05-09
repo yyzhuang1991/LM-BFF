@@ -231,7 +231,7 @@ class Sst2Processor(DataProcessor):
 
     def get_labels(self):
         """See base class."""
-        return ["0", "1"]
+        return ["0", "1", "2"]
 
     def _create_examples(self, lines, set_type):
         """Creates examples for the training, dev and test sets."""
@@ -603,7 +603,7 @@ num_labels_mapping = {
     "cola": 2,
     "mnli": 3,
     "mrpc": 2,
-    "sst-2": 2,
+    "sst-2": 3,
     "sst-3": 3,
 
     "sts-b": 1,
