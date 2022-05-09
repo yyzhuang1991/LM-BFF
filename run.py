@@ -493,6 +493,7 @@ def main():
 
     # Build metric
     def build_compute_metrics_fn(task_name: str) -> Callable[[EvalPrediction], Dict]:
+        print(f"------------- {task_name}")
         def compute_metrics_fn(p: EvalPrediction):
             # Note: the eval dataloader is sequential, so the examples are in order.
             # We average the logits over each sample for using demonstrations.
